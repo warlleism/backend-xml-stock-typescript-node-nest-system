@@ -20,6 +20,7 @@ model Product {
   code        String
   name        String
   price       Float
+  category    String
   description String
   quantity    Int
   createdAt   DateTime @default(now())

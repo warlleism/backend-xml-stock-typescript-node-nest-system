@@ -1,16 +1,17 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../db/prisma.service";
+import { ProductEntity } from "./product.entity";
 
 @Injectable()
 export class ProductRepository {
     constructor(private prismaService: PrismaService) { }
 
-    async createProduct(data: any) {
+    async createProduct(data: ProductEntity) {
         const result = await this.prismaService.product.create({ data });
         return result;
     }
 
-    async updateProduct(data: any) {
+    async updateProduct(data: ProductEntity) {
         const result = await this.prismaService.product.update({
             where: {
                 id: data.id
@@ -53,6 +54,20 @@ export class ProductRepository {
         })
 
         return result
+
+    }
+
+    async getAllCategory() {
+        const result = await this.prismaService.$queryRaw<any>`
+        SELECT 
+            "category"
+        FROM "Product"
+        GROUP BY "category";
+        `
+
+
+        const data = result.map((item: { category: string }) => item.category)
+        return data
 
     }
 

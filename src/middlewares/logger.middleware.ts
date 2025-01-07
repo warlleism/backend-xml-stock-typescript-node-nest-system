@@ -30,9 +30,6 @@ export class LoggerMiddleware implements NestMiddleware {
                 return res.status(401).json({ message: 'Invalid token' });
             }
 
-            const { password: _, ...loggedUser } = user;
-            req.user = loggedUser;
-
             next();
         } catch (error) {
             return res.status(401).json({ message: 'Invalid token' });
