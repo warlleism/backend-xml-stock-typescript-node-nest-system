@@ -7,7 +7,19 @@ export class ProductRepository {
     constructor(private prismaService: PrismaService) { }
 
     async createProduct(data: ProductEntity) {
-        const result = await this.prismaService.product.create({ data });
+        const result = await this.prismaService.product.upsert({
+            where: { name: data.name },
+            create: data,
+            update: {
+                quantity: {
+                    increment: data.quantity,
+                },
+                price: data.price,
+                category: data.category,
+                description: data.description,
+                updatedAt: new Date(),
+            },
+        });
         return result;
     }
 
@@ -54,7 +66,6 @@ export class ProductRepository {
         })
 
         return result
-
     }
 
     async getAllCategory() {
@@ -64,8 +75,6 @@ export class ProductRepository {
         FROM "Product"
         GROUP BY "category";
         `
-
-
         const data = result.map((item: { category: string }) => item.category)
         return data
 

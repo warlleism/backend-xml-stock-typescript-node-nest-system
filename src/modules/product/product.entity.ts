@@ -1,7 +1,7 @@
 export interface ProductEntity {
     id: number;
     name: string;
-    code: string;
+    code: number;
     category: string;
     quantity: number;
     description: string;
