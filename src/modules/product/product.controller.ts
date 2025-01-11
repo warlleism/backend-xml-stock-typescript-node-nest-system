@@ -2,7 +2,6 @@ import { BadRequestException, Body, Controller, Delete, Get, HttpStatus, Patch, 
 import { ProductRepository } from './product.repository';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { parseStringPromise } from 'xml2js';
-import { ProductEntity } from './product.entity';
 
 @Controller('product')
 export class ProductController {
@@ -10,7 +9,7 @@ export class ProductController {
 
     @Post('create')
     @UseInterceptors(FileInterceptor('file'))
-    async createProduct(@UploadedFile() file: Express.Multer.File, @Body() body: ProductEntity) {
+    async createProduct(@UploadedFile() file: Express.Multer.File) {
 
         try {
 
