@@ -1,7 +1,9 @@
 import { BadRequestException, Body, Controller, Delete, Get, HttpStatus, Patch, Post, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { ProductRepository } from './product.repository';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ProductRepository } from './product.repository';
 import { parseStringPromise } from 'xml2js';
+import hasEmptyString from 'src/utils/hasEmpty';
+import { IProduct } from './product.entity';
 
 @Controller('product')
 export class ProductController {
@@ -9,9 +11,24 @@ export class ProductController {
 
     @Post('create')
     @UseInterceptors(FileInterceptor('file'))
-    async createProduct(@UploadedFile() file: Express.Multer.File) {
+    async createProduct(@UploadedFile() file: Express.Multer.File, @Body() body: any) {
 
         try {
+
+            if (!file) {
+
+                if (hasEmptyString(body)) {
+                    throw new Error("O objeto contém valores vazios.");
+                }
+
+                const result = await this.repository.createProduct(body);
+
+                return {
+                    message: 'Product created successfully',
+                    data: result,
+                    status: HttpStatus.CREATED
+                };
+            }
 
             if (file.mimetype !== 'text/xml' && file.mimetype !== 'application/xml') {
                 throw new BadRequestException('Invalid file type. Only XML files are allowed.');
@@ -27,9 +44,11 @@ export class ProductController {
             const products = jsonResult.stock.product;
 
             const createdProducts = await Promise.all(
-                products.map(async (product: any) => {
-                    product.quantity = parseInt(product.quantity);
-                    product.price = parseFloat(product.price);
+                products.map(async (product: IProduct) => {
+                    product.categoryid = parseInt(product.categoryid.toString(), 10);
+                    product.principleactiveid = parseInt(product.principleactiveid.toString(), 10);
+                    product.quantity = parseInt(product.quantity.toString(), 10);
+                    product.price = parseFloat(product.price.toString());
                     return await this.repository.createProduct(product);
                 })
             );

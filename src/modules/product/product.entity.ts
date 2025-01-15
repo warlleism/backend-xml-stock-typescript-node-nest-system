@@ -1,11 +1,15 @@
-export interface ProductEntity {
+export interface IProduct {
     id: number;
-    name: string;
     code: number;
-    category: string;
-    quantity: number;
-    description: string;
+    name: string;
     price: number;
+    categoryid: number;
+    principleactiveid: number;
+    description: string;
+    quantity: number;
+    dosage: string;
+    laboratory: string;
+    requiresPrescription: string;
     createdAt: Date;
     updatedAt: Date;
 }

@@ -37,8 +37,6 @@ export class UserController {
 
             const user = await this.repository.userLogin(data);
 
-            console.log(user)
-
             if (!user) {
                 throw new Error('User not found');
             }

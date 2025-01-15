@@ -1,29 +1,32 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../db/prisma.service";
-import { ProductEntity } from "./product.entity";
+import { IProduct } from "./product.entity";
 
 @Injectable()
 export class ProductRepository {
     constructor(private prismaService: PrismaService) { }
 
-    async createProduct(data: ProductEntity) {
+    async createProduct(data: IProduct) {
+
         const result = await this.prismaService.product.upsert({
             where: { name: data.name },
             create: data,
             update: {
-                quantity: {
-                    increment: data.quantity,
-                },
+                quantity: { increment: data.quantity },
                 price: data.price,
-                category: data.category,
+                categoryid: +data.categoryid,
                 description: data.description,
+                principleactiveid: +data.principleactiveid,
+                dosage: data.dosage,
+                laboratory: data.laboratory,
+                requiresPrescription: data.requiresPrescription,
                 updatedAt: new Date(),
             },
         });
         return result;
     }
 
-    async updateProduct(data: ProductEntity) {
+    async updateProduct(data: IProduct) {
         const result = await this.prismaService.product.update({
             where: {
                 id: data.id
@@ -70,8 +73,7 @@ export class ProductRepository {
 
     async getAllCategory() {
         const result = await this.prismaService.$queryRaw<any>`
-        SELECT 
-            "category"
+        SELECT "category"
         FROM "Product"
         GROUP BY "category";
         `
@@ -83,13 +85,13 @@ export class ProductRepository {
     async getProducts(page: number, pageSize: number) {
 
         const skip = (page - 1) * pageSize;
-
         const take = +pageSize;
         const total = await this.prismaService.product.count();
-        const result = await this.prismaService.product.findMany({ skip, take });
+        const newResult = (await this.prismaService.product.findMany({ skip, take }))
+            .map(item => ({ ...item, requiresPrescription: Boolean(item.requiresPrescription) }));
 
         return {
-            result,
+            newResult,
             pagination: {
                 total,
                 page,

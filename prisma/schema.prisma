@@ -16,13 +16,37 @@ model User {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  code        Int      @unique @default(autoincrement())
-  name        String   @unique
-  price       Float
-  category    String
+  id                   Int              @id @default(autoincrement())
+  code                 Int              @unique @default(autoincrement())
+  name                 String           @unique
+  price                Float
+  description          String
+  quantity             Int
+  principleactiveid    Int
+  categoryid           Int
+  dosage               String
+  laboratory           String
+  requiresPrescription String
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @default(now())
+  PrincipleActive      PrincipleActive? @relation(fields: [principleactiveid], references: [id])
+  Category             Category?        @relation(fields: [categoryid], references: [id])
+}
+
+model PrincipleActive {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  bula      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  products  Product[]
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
   description String
-  quantity    Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
+  products    Product[]
 }
