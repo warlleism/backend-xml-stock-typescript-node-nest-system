@@ -24,6 +24,7 @@ export class ActiveController {
             }
 
             const actives = jsonResult.activeIngredients.activeIngredient;
+            console.log(actives);
 
             const createdActives = await Promise.all(
                 actives.map(async (active: any) => {
