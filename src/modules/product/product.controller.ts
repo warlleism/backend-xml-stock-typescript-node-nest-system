@@ -12,37 +12,26 @@ export class ProductController {
     @Post('create')
     @UseInterceptors(FileInterceptor('file'))
     async createProduct(@UploadedFile() file: Express.Multer.File, @Body() body: any) {
-
         try {
-
             if (!file) {
-
                 if (hasEmptyString(body)) {
                     throw new Error("O objeto contém valores vazios.");
                 }
-
                 const result = await this.repository.createProduct(body);
-
                 return {
                     message: 'Product created successfully',
                     data: result,
                     status: HttpStatus.CREATED
                 };
             }
-
-            if (file.mimetype !== 'text/xml' && file.mimetype !== 'application/xml') {
-                throw new BadRequestException('Invalid file type. Only XML files are allowed.');
-            }
+            if (file.mimetype !== 'text/xml' && file.mimetype !== 'application/xml') throw new BadRequestException('Invalid file type. Only XML files are allowed.');
 
             const xmlString = file.buffer.toString('utf-8');
             const jsonResult = await parseStringPromise(xmlString, { explicitArray: false });
 
-            if (!jsonResult.stock.product || !Array.isArray(jsonResult.stock.product)) {
-                throw new BadRequestException('Invalid XML structure. Expected "stock" with an array of products.');
-            }
+            if (!jsonResult.stock.product || !Array.isArray(jsonResult.stock.product)) throw new BadRequestException('Invalid XML structure. Expected "stock" with an array of products.');
 
             const products = jsonResult.stock.product;
-
             const createdProducts = await Promise.all(
                 products.map(async (product: IProduct) => {
                     product.categoryid = parseInt(product.categoryid.toString(), 10);

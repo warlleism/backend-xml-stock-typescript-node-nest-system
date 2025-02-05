@@ -3,21 +3,20 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  password String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
 
 model Product {
   id                   Int              @id @default(autoincrement())
-  code                 Int              @unique @default(autoincrement())
   name                 String           @unique
   price                Float
   description          String

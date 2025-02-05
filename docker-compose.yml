@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: bitnami/mysql:latest
+    container_name: my-mysql-1
+    ports:
+      - '3307:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: xml
+      MYSQL_USER: myuser  
+      MYSQL_PASSWORD: root
+    volumes:
+      - ./data:/docker-entrypoint-initdb.d  
+      - polls_mysql_data:/bitnami/mysql
+
+volumes:
+  polls_mysql_data:

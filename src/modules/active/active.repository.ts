@@ -17,4 +17,9 @@ export class ActiveRepository {
         })
         return result;
     }
+
+    async getAllActives() {
+        const result = await this.prismaService.principleActive.findMany();
+        return result;
+    }
 }

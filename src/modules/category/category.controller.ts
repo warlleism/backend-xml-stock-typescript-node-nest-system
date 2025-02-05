@@ -9,8 +9,18 @@ export class CategoryController {
 
     @Post('create')
     @UseInterceptors(FileInterceptor('file'))
-    async createCategory(@UploadedFile() file: Express.Multer.File) {
+    async createCategory(@UploadedFile() file: Express.Multer.File, @Body() body: any) {
         try {
+
+            if (body) {
+                const data = await this.repository.createCategory(body);
+                return {
+                    message: 'Category created successfully',
+                    data: data,
+                    status: HttpStatus.CREATED
+                }
+            }
+
             if (file.mimetype !== 'text/xml' && file.mimetype !== 'application/xml') {
                 throw new BadRequestException('Invalid file type. Only XML files are allowed.');
             }
@@ -47,7 +57,19 @@ export class CategoryController {
 
     @Get('get')
     async getCategories() {
-        const result = await this.repository.getCategories();
-        return result;
+        try {
+            const result = await this.repository.getCategories();
+            return {
+                data: result,
+                message: 'Categories found successfully',
+                status: HttpStatus.OK
+            }
+        } catch (error) {
+            return {
+                message: 'Error getting Actives',
+                error: error.message,
+                status: HttpStatus.BAD_REQUEST
+            }
+        }
     }
 }

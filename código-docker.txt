@@ -1,0 +1,4 @@
+// para acessar o banco de dados
+docker-compose exec mysql mysql -u root -p xml
+
+
