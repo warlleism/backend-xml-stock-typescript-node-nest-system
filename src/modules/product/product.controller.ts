@@ -92,11 +92,20 @@ export class ProductController {
     @Get('getSearch')
     async getSearchProduct(@Query('name') name: string) {
         try {
+            if (!name) {
+                return {
+                    data: [],
+                    message: 'Error getting Product',
+                    error: 'name is required',
+                    status: HttpStatus.BAD_REQUEST
+                }
+            }
             const result = await this.repository.getSearch(name);
             return {
                 data: result,
                 message: 'Product found successfully',
                 status: HttpStatus.OK
+
             }
         } catch (error) {
             return {
@@ -131,7 +140,8 @@ export class ProductController {
         try {
             const result = await this.repository.getProducts(+page, +pageSize);
             return {
-                data: result,
+                data: result.data,
+                pagination: result.pagination,
                 message: 'Products found successfully',
                 status: HttpStatus.OK
             }

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../../db/prisma.service";
 import { IProduct } from "./product.entity";
 
@@ -50,7 +50,7 @@ export class ProductRepository {
         const result = await this.prismaService.product.findMany({
             where: {
                 name: {
-                    contains: name
+                    contains: name.toLowerCase()
                 }
             },
             take: 5,
@@ -88,10 +88,10 @@ export class ProductRepository {
         const take = +pageSize;
         const total = await this.prismaService.product.count();
         const newResult = (await this.prismaService.product.findMany({ skip, take }))
-            .map(item => ({ ...item, requiresPrescription: Boolean(item.requiresPrescription) }));
+
 
         return {
-            newResult,
+            data: newResult,
             pagination: {
                 total,
                 page,

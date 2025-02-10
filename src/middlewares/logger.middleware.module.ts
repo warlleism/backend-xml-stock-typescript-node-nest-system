@@ -16,7 +16,7 @@ export class LoggerMiddlewareModule {
                 // { path: 'product/get', method: RequestMethod.GET },
                 { path: 'product/update', method: RequestMethod.PATCH },
                 { path: 'product/getOne', method: RequestMethod.GET },
-                { path: 'product/delete', method: RequestMethod.DELETE }
+                // { path: 'product/delete', method: RequestMethod.DELETE }
             );
     }
 }
